@@ -253,7 +253,7 @@ func (sens *Sensor) SetExtCrystalUse(usextal bool) (err error) {
 	}
 	time.Sleep(time.Millisecond * 10)
 	err = sens.SetMode(modeback)
-	time.Sleep(time.Millisecond * 20)
+	time.Sleep(time.Second) // seems to be necessary, without this the sensor only returns 0 for one second
 	return err
 }
 
@@ -325,9 +325,9 @@ func (sens *Sensor) GetRevInfo() (err error) {
 func (sens *Sensor) GetCalibration() (err error) {
 	calibStat, err := sens.i2cbus.ReadRegU8(RegCalibStat)
 
-	sens.SensorCalib.SysCalib = (calibStat << 6) & 0x03
-	sens.SensorCalib.GyrCalib = (calibStat << 4) & 0x03
-	sens.SensorCalib.AccCalib = (calibStat << 2) & 0x03
+	sens.SensorCalib.SysCalib = (calibStat >> 6) & 0x03
+	sens.SensorCalib.GyrCalib = (calibStat >> 4) & 0x03
+	sens.SensorCalib.AccCalib = (calibStat >> 2) & 0x03
 	sens.SensorCalib.MagCalib = calibStat & 0x03
 
 	return err
